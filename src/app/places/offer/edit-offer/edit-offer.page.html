@@ -1,9 +1,16 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>edit-offer</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/places/tabs/offer"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{place.title}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <ion-card>
+    <ion-thumbnail>
+      <ion-img [src]="place.imageUrl"></ion-img>
+    </ion-thumbnail>
+  </ion-card>
 </ion-content>
