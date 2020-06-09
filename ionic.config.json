@@ -1,5 +1,7 @@
 {
   "name": "airBNB-clone",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
