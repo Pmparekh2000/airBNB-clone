@@ -5,7 +5,23 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-button color="primary" (click)="onLogin()">
+  <ion-list>
+    <!-- The first child of ant "ion-list" is ion-item -->
+    <ion-item>
+      <!-- ion-item can be used indepenedently also not restricted from been used inside ion-list -->
+      <!-- ion-label is just used for showing text but can be used independently. But their special effects can be seen only if used with item like here its combined with ion-input -->
+      <ion-label position="floating">
+        Email
+      </ion-label>
+      <ion-input>
+      </ion-input>
+    </ion-item>
+  </ion-list>
+  <!-- <div class="ion-text-center">
+    <ion-spinner color="primary" *ngIf="isLoading"></ion-spinner>
+  </div> -->
+  
+  <ion-button color="primary" (click)="onLogin()" *ngIf="!isLoading">
     Login
   </ion-button>
 </ion-content>

@@ -3,7 +3,7 @@ import { Places } from './../../place.model';
 import { CreateBookingComponent } from './../../../bookings/create-booking/create-booking.component';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { NavController, ModalController } from '@ionic/angular';
+import { NavController, ModalController, ActionSheetController } from '@ionic/angular';
 
 @Component({
   selector: 'app-place-detail',
@@ -18,7 +18,8 @@ export class PlaceDetailPage implements OnInit {
               private navCtrl: NavController,
               private modalCtrl: ModalController,
               private activatedRoute: ActivatedRoute,
-              private placeService: PlacesService) { }
+              private placeService: PlacesService,
+              private actionSheetCtrl: ActionSheetController) { }
 
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe((paramMap) => {
@@ -37,6 +38,33 @@ export class PlaceDetailPage implements OnInit {
     // this.navCtrl.pop();
     // Popping will not work if stack of page is empty
     // Can be used at start
+    this.actionSheetCtrl.create({
+      header: 'Choose an action',
+      buttons: [
+        {
+          text: 'Select Date',
+          handler: () => {
+            this.openBookingModal('select');
+          }
+        },
+        {
+          text: 'Random Date',
+          handler: () => {
+            this.openBookingModal('random');
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'destructive'
+        }
+      ]
+    }).then(actionSheetEl => {
+      actionSheetEl.present();
+    });
+  }
+
+  openBookingModal(mode: 'select' | 'random') {
+    console.log(mode);
     this.modalCtrl.create({
       component: CreateBookingComponent,
       componentProps: {selectedPlace: this.place},
