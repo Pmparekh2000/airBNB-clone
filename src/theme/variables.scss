@@ -47,7 +47,7 @@
   --ion-color-warning-tint: #ffca22;
 
   /** danger **/
-  --ion-color-danger: #eb445a;
+  --ion-color-danger: #f01515;
   --ion-color-danger-rgb: 235, 68, 90;
   --ion-color-danger-contrast: #ffffff;
   --ion-color-danger-contrast-rgb: 255, 255, 255;
@@ -83,7 +83,7 @@
 }
 
 ion-button {
-  --background: blue;
+  // --background: blue;
   
 
 }
@@ -236,9 +236,5 @@ ion-button {
     --ion-toolbar-background: #1f1f1f;
 
     --ion-tab-bar-background: #1f1f1f;
-  }
-
-  .md {
-    --ion-color-primary: green;
   }
 }

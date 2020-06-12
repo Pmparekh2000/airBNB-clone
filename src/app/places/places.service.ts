@@ -11,21 +11,27 @@ export class PlacesService {
       'Prerak mantion',
       'In the heart of nature',
       'https://i.ytimg.com/vi/_L-7MxUBGL8/maxresdefault.jpg',
-      1000
+      1000,
+      new Date('2019-01-01'),
+      new Date('2019-12-31')
     ),
     new Places(
       'p2',
       'Siddhi mantion',
       'In the heart of nature',
       'https://images.hdqwalls.com/download/amazing-beautiful-places-1920x1080.jpg',
-      2000
+      2000,
+      new Date('2019-01-01'),
+      new Date('2019-12-31')
     ),
     new Places(
       'p3',
       'Vanshika mantion',
       'In the heart of nature',
       'https://www.tripsavvy.com/thmb/eEymkEZ9Ys9LxYw6yPGgbxCvNT4=/2125x1411/filters:fill(auto,1)/GettyImages-534909771-580f5f4c5f9b58564cc08bf2.jpg',
-      3000
+      3000,
+      new Date('2019-01-01'),
+      new Date('2019-12-31')
     ),
   ];
 
