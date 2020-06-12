@@ -26,7 +26,7 @@ export class DiscoverPage implements OnInit {
   }
 
   onFilterUpdate($event: CustomEvent<SegmentChangeEventDetail>){
-    console.log(event.detail);
+    // console.log(event.detail);
   }
 
 }
