@@ -37,10 +37,10 @@ const routes: Routes = [
             path: 'edit/:placeId',
             loadChildren: () => import('./offer/edit-offer/edit-offer.module').then(m => m.EditOfferPageModule)
           },
-          {
-            path: ':placeId',
-            loadChildren: () => import('./offer/offer-bookings/offer-bookings.module').then(m => m.OfferBookingsPageModule)
-          }
+          // {
+          //   path: ':placeId',
+          //   loadChildren: () => import('./offer/offer-bookings/offer-bookings.module').then(m => m.OfferBookingsPageModule)
+          // }
         ]
       },
       {

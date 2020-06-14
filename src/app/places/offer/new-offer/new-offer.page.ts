@@ -1,3 +1,4 @@
+import { AuthService } from './../../../auth/auth.service';
 import { Router } from '@angular/router';
 import { PlacesService } from './../../places.service';
 import { Component, OnInit } from '@angular/core';
@@ -15,7 +16,8 @@ export class NewOfferPage implements OnInit {
   constructor(
     private placeService: PlacesService,
     private router: Router,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -59,7 +61,8 @@ export class NewOfferPage implements OnInit {
           this.form.value.description,
           +this.form.value.price,
           new Date(this.form.value.dateFrom),
-          new Date(this.form.value.dateTo)
+          new Date(this.form.value.dateTo),
+          // this.authService.userId
         ).subscribe(() => {
           loadingEl.dismiss();
           this.form.reset();

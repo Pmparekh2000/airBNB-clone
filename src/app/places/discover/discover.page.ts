@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 export class DiscoverPage implements OnInit, OnDestroy {
 
   loadedPlaces: Places[];
+  isLoading: false;
   listedLoadedPlaces: Places[];
   relevantPlaces: Places[];
   private placesSub: Subscription;
@@ -28,6 +29,13 @@ export class DiscoverPage implements OnInit, OnDestroy {
       // console.log(this.loadedPlaces);
       this.relevantPlaces = this.loadedPlaces;
       this.listedLoadedPlaces = this.relevantPlaces.slice(1);
+    });
+  }
+
+  ionViewWillEnter() {
+    // this.isLoading = true;
+    this.placeService.fetchPlaces().subscribe(() => {
+      this.isLoading = false;
     });
   }
 

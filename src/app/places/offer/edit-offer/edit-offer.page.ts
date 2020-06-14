@@ -1,7 +1,11 @@
 import { PlacesService } from './../../places.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NavController, LoadingController } from '@ionic/angular';
+import {
+  NavController,
+  LoadingController,
+  AlertController,
+} from '@ionic/angular';
 import { Places } from '../../place.model';
 import {
   FormGroup,
@@ -18,6 +22,8 @@ import { Subscription } from 'rxjs';
 })
 export class EditOfferPage implements OnInit, OnDestroy {
   place: Places;
+  isLoading: false;
+  placeId: string;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -25,7 +31,8 @@ export class EditOfferPage implements OnInit, OnDestroy {
     private placeService: PlacesService,
     private formBuilder: FormBuilder,
     private router: Router,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
   ) {}
 
   form: FormGroup;
@@ -37,12 +44,35 @@ export class EditOfferPage implements OnInit, OnDestroy {
         this.navCtrl.navigateBack('places/tabs/offer');
         return;
       }
+      this.placeId = paramMap.get('placeId');
+      // this.isLoading = true;
       this.placeSub = this.placeService
         .getPlace(paramMap.get('placeId'))
-        .subscribe((place) => {
-          this.place = place;
-          this.initialiseForm();
-        });
+        .subscribe(
+          (place) => {
+            this.place = place;
+            this.initialiseForm();
+            this.isLoading = false;
+          },
+          (error) => {
+            this.alertCtrl
+              .create({
+                header: 'An error occured',
+                message: 'Place could not be fetched',
+                buttons: [
+                  {
+                    text: 'Okay',
+                    handler: () => {
+                      this.router.navigate(['/places/tabs/offer']);
+                    },
+                  },
+                ],
+              })
+              .then((alertEl) => {
+                alertEl.present();
+              });
+          }
+        );
     });
   }
 
@@ -71,20 +101,24 @@ export class EditOfferPage implements OnInit, OnDestroy {
     if (!this.form.valid) {
       return;
     }
-    this.loadingCtrl.create({
-      message: 'Updating place...'
-    }).then(loadingEl => {
-      loadingEl.present();
-      this.placeService.updatePlace(
-        this.place.id,
-        this.form.value.place_name,
-        this.form.value.place_description
-      ).subscribe(() => {
-        loadingEl.dismiss();
-        this.form.reset();
-        this.router.navigate(['/places/tabs/offer']);
+    this.loadingCtrl
+      .create({
+        message: 'Updating place...',
+      })
+      .then((loadingEl) => {
+        loadingEl.present();
+        this.placeService
+          .updatePlace(
+            this.place.id,
+            this.form.value.place_name,
+            this.form.value.place_description
+          )
+          .subscribe(() => {
+            loadingEl.dismiss();
+            this.form.reset();
+            this.router.navigate(['/places/tabs/offer']);
+          });
       });
-    });
   }
 
   ngOnDestroy() {
