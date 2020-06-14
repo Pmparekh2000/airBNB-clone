@@ -79,7 +79,7 @@ export class BookingService {
     }));
   }
 
-  
+
   fetchBookings() {
     return this.http
       .get<{ [key: string]: BookingData }>(
