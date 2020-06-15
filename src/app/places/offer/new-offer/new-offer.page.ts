@@ -1,3 +1,4 @@
+import { PlaceLocation } from './../../location.model';
 import { AuthService } from './../../../auth/auth.service';
 import { Router } from '@angular/router';
 import { PlacesService } from './../../places.service';
@@ -42,7 +43,12 @@ export class NewOfferPage implements OnInit {
         updateOn: 'blur',
         validators: [Validators.required],
       }),
+      location: new FormControl(null, { validators: [Validators.required] })
     });
+  }
+
+  onLocationPicked(location: PlaceLocation){
+    this.form.patchValue({ location: location });
   }
 
   onCreateOffer() {
@@ -62,7 +68,8 @@ export class NewOfferPage implements OnInit {
           +this.form.value.price,
           new Date(this.form.value.dateFrom),
           new Date(this.form.value.dateTo),
-          // this.authService.userId
+          // this.authService.userId,
+          this.form.value.location
         ).subscribe(() => {
           loadingEl.dismiss();
           this.form.reset();

@@ -1,3 +1,4 @@
+import { PlaceLocation } from './location.model';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './../auth/auth.service';
 import { Injectable } from '@angular/core';
@@ -13,6 +14,7 @@ interface PlaceData {
   price: number;
   title: string;
   userId: string;
+  location: PlaceLocation;
 }
 
 // [
@@ -81,7 +83,8 @@ export class PlacesService {
                   resData[key].price,
                   new Date(resData[key].availableFrom),
                   new Date(resData[key].availableTo),
-                  resData[key].userId
+                  resData[key].userId,
+                  resData[key].location
                 )
               );
             }
@@ -110,7 +113,8 @@ export class PlacesService {
             placeData.price,
             new Date(placeData.availableFrom),
             new Date(placeData.availableTo),
-            placeData.userId
+            placeData.userId,
+            placeData.location
           );
         })
       )
@@ -123,6 +127,7 @@ export class PlacesService {
     price: number,
     dateFrom: Date,
     dateTo: Date,
+    location: PlaceLocation
   ) // console.log(userId);
   {
     let generateId: string;
@@ -134,7 +139,8 @@ export class PlacesService {
       price,
       dateFrom,
       dateTo,
-      this.authService.userId
+      this.authService.userId,
+      location
     );
     return this.http
       .post<{ name: string }>(
@@ -188,7 +194,8 @@ export class PlacesService {
         oldPlace.price,
         oldPlace.availableFrom,
         oldPlace.availableTo,
-        oldPlace.userId
+        oldPlace.userId,
+        oldPlace.location
       );
       return this.http.put(
         `https://angular9-ionic5-course.firebaseio.com/offered-places/${placeId}.json`,

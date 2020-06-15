@@ -1,3 +1,4 @@
+import { MapModalComponent } from './../../../shared/map-modal/map-modal.component';
 import { AuthService } from './../../../auth/auth.service';
 import { BookingService } from './../../../bookings/booking.service';
 import { PlacesService } from './../../places.service';
@@ -53,20 +54,21 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
             this.isBookable = place.userId !== this.authService.userId;
             this.isLoading = false;
           },
-          error => {
-            this.alertCtrl.create({
-              header: 'An error occured',
-              message: 'Could not load place.',
-              buttons: [
-                {
-                  text: 'Okay',
-                  handler: () => {
-                    this.router.navigate(['/places/tabs/discover']);
-                  }
-                }
-              ]
-            })
-            .then(alertEl => alertEl.present());
+          (error) => {
+            this.alertCtrl
+              .create({
+                header: 'An error occured',
+                message: 'Could not load place.',
+                buttons: [
+                  {
+                    text: 'Okay',
+                    handler: () => {
+                      this.router.navigate(['/places/tabs/discover']);
+                    },
+                  },
+                ],
+              })
+              .then((alertEl) => alertEl.present());
           }
         );
     });
@@ -141,6 +143,25 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
             });
           // console.log('BOOKED!');
         }
+      });
+  }
+
+  onShowFullMap() {
+    this.modalCtrl
+      .create({
+        component: MapModalComponent,
+        componentProps: {
+          center: {
+            lat: this.place.location.lat,
+            lng: this.place.location.lng,
+          },
+          selectable: false,
+          closeButtonText: 'Close',
+          title: this.place.location.address
+        }
+      })
+      .then((modalEl) => {
+        modalEl.present();
       });
   }
 

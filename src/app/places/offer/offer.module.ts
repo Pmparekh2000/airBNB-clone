@@ -19,3 +19,4 @@ import { OfferPage } from './offer.page';
   declarations: [OfferPage, OfferItemComponent]
 })
 export class OfferPageModule {}
+
