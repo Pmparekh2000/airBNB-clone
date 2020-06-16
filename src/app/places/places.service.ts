@@ -121,13 +121,24 @@ export class PlacesService {
     );
   }
 
+  uploadImage(image: string) {
+    const uploadData = new FormData();
+    uploadData.append('image', image);
+
+    return this.http.post<{imageUrl: string, imagePath: string}>(
+      'https://us-central1-angular9-ionic5-course.cloudfunctions.net/storeImage',
+      uploadData
+    );
+  }
+
   addPlace(
     title: string,
     desciption: string,
     price: number,
     dateFrom: Date,
     dateTo: Date,
-    location: PlaceLocation
+    location: PlaceLocation,
+    imageUrl: string
   ) // console.log(userId);
   {
     let generateId: string;
@@ -135,7 +146,7 @@ export class PlacesService {
       Math.random().toString(),
       title,
       desciption,
-      'https://cdn.vox-cdn.com/thumbor/rUwkUuReeunwkJPobbQfXKogIPo=/0x33:645x396/1600x900/cdn.vox-cdn.com/uploads/chorus_image/image/47920091/winslow-house-thumb.0.jpg',
+      imageUrl,
       price,
       dateFrom,
       dateTo,

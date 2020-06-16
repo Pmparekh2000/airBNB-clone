@@ -14,3 +14,7 @@
     width: 600;
     object-fit: cover;   
 }
+
+input[type="file"] {
+    display: none;
+}
