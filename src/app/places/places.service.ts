@@ -64,12 +64,15 @@ export class PlacesService {
   }
 
   fetchPlaces() {
-    return this.http
-      .get<{ [key: string]: PlaceData }>(
-        'https://angular9-ionic5-course.firebaseio.com/offered-places.json'
-      )
-      .pipe(
-        map((resData) => {
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token => {
+      return this.http
+        .get<{ [key: string]: PlaceData }>(
+          `https://angular9-ionic5-course.firebaseio.com/offered-places.json?auth=${token}`
+        );
+    }),
+    map((resData) => {
           // console.log(resData);
           const places = [];
           for (const key in resData) {
@@ -98,12 +101,14 @@ export class PlacesService {
   }
 
   getPlace(id: string) {
-    return (
-      this.http
-      .get<PlaceData>(
-        `https://angular9-ionic5-course.firebaseio.com/offered-places/${id}.json`
-      )
-      .pipe(
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token => {
+      return this.http
+        .get<PlaceData>(
+          `https://angular9-ionic5-course.firebaseio.com/offered-places/${id}.json?auth=${token}`
+        );
+      }),
         map(placeData => {
           return new Places(
             id,
@@ -117,7 +122,6 @@ export class PlacesService {
             placeData.location
           );
         })
-      )
     );
   }
 
@@ -125,9 +129,15 @@ export class PlacesService {
     const uploadData = new FormData();
     uploadData.append('image', image);
 
-    return this.http.post<{imageUrl: string, imagePath: string}>(
-      'https://us-central1-angular9-ionic5-course.cloudfunctions.net/storeImage',
-      uploadData
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token => {
+      return this.http.post<{imageUrl: string, imagePath: string}>(
+        'https://us-central1-angular9-ionic5-course.cloudfunctions.net/storeImage',
+        uploadData,
+        {headers: {Authorization: 'Bearer ' + token}}
+      );
+    })
     );
   }
 
@@ -142,23 +152,36 @@ export class PlacesService {
   ) // console.log(userId);
   {
     let generateId: string;
-    const newPlace = new Places(
-      Math.random().toString(),
-      title,
-      desciption,
-      imageUrl,
-      price,
-      dateFrom,
-      dateTo,
-      this.authService.userId,
-      location
-    );
-    return this.http
-      .post<{ name: string }>(
-        'https://angular9-ionic5-course.firebaseio.com/offered-places.json',
-        { ...newPlace, id: null }
-      )
-      .pipe(
+    let newPlace: Places;
+    let fetchedUserId: string;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userId => {
+        fetchedUserId = userId;
+        return this.authService.token;
+      }),
+      take(1),
+      switchMap(token => {
+      if (!fetchedUserId) {
+        throw new Error('No user found');
+      }
+      newPlace = new Places(
+        Math.random().toString(),
+        title,
+        desciption,
+        imageUrl,
+        price,
+        dateFrom,
+        dateTo,
+        fetchedUserId,
+        location
+      );
+      return this.http
+        .post<{ name: string }>(
+          `https://angular9-ionic5-course.firebaseio.com/offered-places.json?auth=${token}`,
+          { ...newPlace, id: null }
+        );
+    }),
         switchMap((resData) => {
           generateId = resData.name;
           return this.places;
@@ -184,7 +207,13 @@ export class PlacesService {
     // console.log(placeId);
     // console.log(title);
     let updatedPlaces: Places[];
-    return this.places.pipe(
+    let fetchedToken: string;
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token => {
+      fetchedToken = token;
+      return this.places;
+    }),
       take(1),
       switchMap((places) => {
         if (!places || places.length <= 0 ){
@@ -209,7 +238,7 @@ export class PlacesService {
         oldPlace.location
       );
       return this.http.put(
-        `https://angular9-ionic5-course.firebaseio.com/offered-places/${placeId}.json`,
+        `https://angular9-ionic5-course.firebaseio.com/offered-places/${placeId}.json?auth="${fetchedToken}`,
         { ...updatedPlaces[updatedPlaceIndex], id: null }
       );
       }),

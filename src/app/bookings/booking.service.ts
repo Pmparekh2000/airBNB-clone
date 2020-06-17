@@ -1,9 +1,9 @@
-import { HttpClient } from "@angular/common/http";
-import { AuthService } from "./../auth/auth.service";
-import { Booking } from "./bookings.model";
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
-import { take, tap, delay, switchMap, map } from "rxjs/operators";
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from './../auth/auth.service';
+import { Booking } from './bookings.model';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { take, tap, delay, switchMap, map } from 'rxjs/operators';
 
 interface BookingData {
   bookedFrom: string;
@@ -17,7 +17,7 @@ interface BookingData {
   userId: string;
 }
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class BookingService {
   private _bookings = new BehaviorSubject<Booking[]>([]);
 
@@ -38,25 +38,38 @@ export class BookingService {
     dateTo: Date
   ) {
     let generatedId: string;
-    const newBooking = new Booking(
-      Math.random().toString(),
-      placeId,
-      this.authService.userId,
-      placeTitle,
-      placeImage,
-      firstName,
-      lastName,
-      guestNumber,
-      dateFrom,
-      dateTo
-    );
-    return this.http
+    let newBooking: Booking;
+    let fetchedUserId: string;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userId => {
+      if (!userId){
+        throw new Error('No user id found');
+      }
+      fetchedUserId = userId;
+      return this.authService.token;
+    }),
+    take(1),
+    switchMap(token => {
+      newBooking = new Booking(
+        Math.random().toString(),
+        placeId,
+        userId,
+        placeTitle,
+        placeImage,
+        firstName,
+        lastName,
+        guestNumber,
+        dateFrom,
+        dateTo
+      );
+      return this.http
       .post<{ name: string }>(
-        "https://angular9-ionic5-course.firebaseio.com/bookings.json",
+        `https://angular9-ionic5-course.firebaseio.com/bookings.json?auth=${token}`,
         { ...newBooking, id: null }
-      )
-      .pipe(
-        switchMap((resData) => {
+      );
+    }),
+      switchMap((resData) => {
           generatedId = resData.name;
           return this.bookings;
         }),
@@ -69,8 +82,13 @@ export class BookingService {
   }
 
   cancelBooking(bookingId: string) {
-    return this.http.delete(`https://angular9-ionic5-course.firebaseio.com/bookings/${bookingId}.json`
-    ).pipe(switchMap(() => {
+    return this.authService.token.pipe(
+      take(1),
+      switchMap(token => {
+        return this.http.delete(`https://angular9-ionic5-course.firebaseio.com/bookings/${bookingId}.json?auth=${token}`
+        );
+      }),
+    switchMap(() => {
       return this.bookings;
     }),
     take(1),
@@ -81,13 +99,25 @@ export class BookingService {
 
 
   fetchBookings() {
-    return this.http
+    let fetchedUserId: string;
+    return this.authService.userId
+    .pipe(
+      take(1),
+      switchMap(userId => {
+      if (!userId) {
+        throw new Error('User not found');
+      }
+      fetchedUserId = userId;
+      return this.authService.token;
+    }),
+    take(1),
+    switchMap(token => {
+      return this.http
       .get<{ [key: string]: BookingData }>(
         // `https://angular9-ionic5-course.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${this.authService.userId}"`
-        "https://angular9-ionic5-course.firebaseio.com/bookings.json"
-      )
-      .pipe(
-        map((bookingData) => {
+        `https://angular9-ionic5-course.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${fetchedUserId}"&auth=${token}`);
+    }),
+      map((bookingData) => {
           const bookings = [];
           for (const key in bookingData) {
             if (bookingData.hasOwnProperty(key)) {

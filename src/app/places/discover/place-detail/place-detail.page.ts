@@ -1,3 +1,4 @@
+import { switchMap, take } from 'rxjs/operators';
 import { MapModalComponent } from './../../../shared/map-modal/map-modal.component';
 import { AuthService } from './../../../auth/auth.service';
 import { BookingService } from './../../../bookings/booking.service';
@@ -46,12 +47,21 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         return;
       }
       this.isLoading = true;
-      this.placeSub = this.placeService
-        .getPlace(paramMap.get('placeId'))
-        .subscribe(
+      let fetchedUserId: string;
+      this.authService.userId
+      .pipe(
+        take(1),
+        switchMap(userId => {
+        if (!userId){
+          throw new Error('Found no user');
+        }
+        fetchedUserId = userId;
+        return this.placeService
+        .getPlace(paramMap.get('placeId'));
+      })).subscribe(
           (place) => {
             this.place = place;
-            this.isBookable = place.userId !== this.authService.userId;
+            this.isBookable = place.userId !== fetchedUserId;
             this.isLoading = false;
           },
           (error) => {
