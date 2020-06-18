@@ -1,5 +1,5 @@
 {
-  "appId": "io.ionic.starter",
+  "appId": "com.my-cool-company.myApp-airBNB",
   "appName": "airBNB-clone",
   "bundledWebRuntime": false,
   "npmClient": "npm",

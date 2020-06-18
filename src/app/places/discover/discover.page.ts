@@ -46,16 +46,17 @@ export class DiscoverPage implements OnInit, OnDestroy {
 
   onFilterUpdate(filter: string){
     this.authService.userId.pipe(take(1)).subscribe(userId => {
-      if (event.detail.value === 'all') {
-        // console.log(this.relevantPlaces);
-        this.relevantPlaces = this.loadedPlaces;
-        this.listedLoadedPlaces = this.relevantPlaces.slice(1);
-      }else{
-        this.relevantPlaces = this.loadedPlaces.filter(
-          place => place.userId !== userId
-        );
-        this.listedLoadedPlaces = this.relevantPlaces.slice(1);
-      }
+      this.relevantPlaces = this.loadedPlaces;
+      this.listedLoadedPlaces = this.relevantPlaces.slice(1);
+      // if (event.detail.value === 'all') {
+      //   // console.log(this.relevantPlaces);
+        
+      // }else{
+      //   this.relevantPlaces = this.loadedPlaces.filter(
+      //     place => place.userId !== userId
+      //   );
+      //   this.listedLoadedPlaces = this.relevantPlaces.slice(1);
+      // }
     });
     // const isShown = place => filter === 'all' || place.userId !== this.authService.userId;
     // this.relevantPlaces = this.loadedPlaces.filter(isShown);

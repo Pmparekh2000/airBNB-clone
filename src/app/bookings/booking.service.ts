@@ -54,7 +54,7 @@ export class BookingService {
       newBooking = new Booking(
         Math.random().toString(),
         placeId,
-        userId,
+        fetchedUserId,
         placeTitle,
         placeImage,
         firstName,
